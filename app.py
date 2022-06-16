@@ -78,13 +78,13 @@ def get_all_orders():
     if request.method == 'POST':
         try:
             order = json.loads(request.data)
-            month_start, day_start, year_start = order['start_date'].split("/")
+            month_start, day_start, year_start = [int(_) for _ in order['start_date'].split("/")]
             month_end, day_end, year_end = order['end_date'].split("/")
             new_order_obj = Order(
                 id=order['id'],
                 name=order['name'],
                 description=order['description'],
-                start_date=datetime.date(year=int(year_start), month=int(month_start), day=int(day_start)),
+                start_date=datetime.date(year=year_start, month=month_start, day=day_start),
                 end_date=datetime.date(year=int(year_end), month=int(month_end), day=int(day_end)),
                 address=order['address'],
                 price=order['price'],
@@ -107,6 +107,33 @@ def get_one_order(oid):
             return "Заказ с таким id не найден"
         else:
             return jsonify(order.to_dict())
+
+    elif request.method == 'PUT':
+        order_data = json.loads(request.data)
+        order = db.session.query(Order).get(oid)
+        if order is None:
+            return "Заказ не найден", 404
+        order.name = order_data['name']
+        order.description = order_data['description']
+        order.start_date = order_data['start_date']
+        order.end_date = order_data['end_date']
+        order.address = order_data['address']
+        order.price = order_data['price']
+        order.customer_id = order_data['customer_id']
+        order.executor_id = order_data['executor_id']
+        db.session.add(order)
+        db.session.commit()
+        db.session.close()
+        return f"Заказ с id {oid} успешно изменен", 200
+
+    elif request.method == 'DELETE':
+        order = db.session.query(Order).get(oid)
+        if order is None:
+            return "Пользователь не найден", 404
+        db.session.delete(order)
+        db.session.commit()
+        db.session.close()
+        return f"Пользователь с id {oid} успешно удален", 200
 
 
 @app.route('/offers', methods=['GET', 'POST'])
@@ -132,10 +159,30 @@ def get_one_offer(of_id):
     if request.method == 'GET':
         offer = Offer.query.get(of_id)
         if offer is None:
-            return "Предложение с таким id не найдено"
+            return f"Предложение с id={of_id} не найдено"
         else:
             return jsonify(offer.to_dict())
 
+    elif request.method == 'PUT':
+        offer_data = json.loads(request.data)
+        offer = db.session.query(Offer).get(of_id)
+        if offer is None:
+            return "Предложение не найдено", 404
+        offer.order_id = offer_data['order_id']
+        offer.executor_id = offer_data['executor_id']
+        db.session.add(offer)
+        db.session.commit()
+        db.session.close()
+        return f"Предложение с id={of_id} успешно изменено", 200
+
+    elif request.method == 'DELETE':
+        offer = db.session.query(Offer).get(of_id)
+        if offer is None:
+            return "Предложение не найдено", 404
+        db.session.delete(offer)
+        db.session.commit()
+        db.session.close()
+        return f"Предложение с id={of_id} успешно удалено", 200
 
 if __name__ == '__main__':
     app.run()
