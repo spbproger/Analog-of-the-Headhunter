@@ -98,7 +98,6 @@ def get_all_orders():
         except Exception as e:
             return e
 
-
 @app.route('/orders/<int:oid>', methods=['GET', 'PUT', 'DELETE'])
 def get_one_order(oid):
     if request.method == 'GET':
@@ -129,7 +128,7 @@ def get_one_order(oid):
     elif request.method == 'DELETE':
         order = db.session.query(Order).get(oid)
         if order is None:
-            return "Пользователь не найден", 404
+            return f"Пользователь с id {oid} не найден", 404
         db.session.delete(order)
         db.session.commit()
         db.session.close()
@@ -186,3 +185,4 @@ def get_one_offer(of_id):
 
 if __name__ == '__main__':
     app.run()
+
