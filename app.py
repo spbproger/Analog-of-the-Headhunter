@@ -77,41 +77,21 @@ def get_all_orders():
 
     if request.method == 'POST':
         try:
-            # order = json.loads(request.data)
-            # month_start, day_start, year_start = [int(_) for _ in order['start_date'].split("/")]
-            # month_end, day_end, year_end = order['end_date'].split("/")
-            # new_order_obj = Order(
-            #     id=order['id'],
-            #     name=order['name'],
-            #     description=order['description'],
-            #     start_date=datetime.date(year=year_start, month=month_start, day=day_start),
-            #     end_date=datetime.date(year=int(year_end), month=int(month_end), day=int(day_end)),
-            #     address=order['address'],
-            #     price=order['price'],
-            #     customer_id=order['customer_id'],
-            #     executor_id=order['executor_id']
-            # )
-            # db.session.add(new_order_obj)
-            # print(new_order_obj)
-            # db.session.commit()
-            # db.session.close()
-
-            data_order = json.loads(request.data)
-            day_start, month_start, year_start = data_order['start_date'].split("/")
-            day_end, month_end, year_end = data_order['end_date'].split("/")
-
-            order = Order(
-                id=data_order['id'],
-                name=data_order['name'],
-                description=data_order['description'],
-                start_date=datetime.date(year=int(year_start), month=int(month_start), day=int(day_start)),
+            order = json.loads(request.data)
+            month_start, day_start, year_start = [int(_) for _ in order['start_date'].split("/")]
+            month_end, day_end, year_end = order['end_date'].split("/")
+            new_order_obj = Order(
+                id=order['id'],
+                name=order['name'],
+                description=order['description'],
+                start_date=datetime.date(year=year_start, month=month_start, day=day_start),
                 end_date=datetime.date(year=int(year_end), month=int(month_end), day=int(day_end)),
-                address=data_order['address'],
-                price=data_order['price'],
-                customer_id=data_order['customer_id'],
-                executor_id=data_order['executor_id'])
-
-            db.session.add(order)
+                address=order['address'],
+                price=order['price'],
+                customer_id=order['customer_id'],
+                executor_id=order['executor_id']
+            )
+            db.session.add(new_order_obj)
             db.session.commit()
             db.session.close()
             return "Заказ создан в базе данных", 200

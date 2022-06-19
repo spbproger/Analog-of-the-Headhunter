@@ -27,9 +27,7 @@ class Offer(db.Model):
     __tablename__ = 'offer'
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
-    # orders = db.relationship('Order')
     executor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    # executors = db.relationship('User')
 
     def to_dict(self):
         return {
@@ -49,9 +47,7 @@ class Order(db.Model):
     address = db.Column(db.Text(100))
     price = db.Column(db.Integer)
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    # customers = db.relationship('User')
     executor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    # executors = db.relationship('User')
 
     def to_dict(self):
         return {
