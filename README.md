@@ -1,2 +1,2 @@
 # Analog of the Headhunter application.
-Flask, SQLAlchemy
+Flask, SQLAlchemy, SqLite3
